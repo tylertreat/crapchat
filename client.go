@@ -6,6 +6,8 @@ import (
     "log"
     "net"
     "os"
+    "os/exec"
+    "runtime"
     "strings"
 )
 
@@ -19,11 +21,24 @@ type Client struct {
     writer         *bufio.Writer
 }
 
+func outputMessage(message string) {
+    fmt.Println(message)
+
+    command := ""
+    if runtime.GOOS == "darwin" {
+        command = "say"
+    } else if runtime.GOOS == "linux" {
+        command = "espeak"
+    }
+
+    exec.Command(command, message).Run()
+}
+
 func (client *Client) ReadIncoming() {
     for {
         line, _ := client.incomingReader.ReadString('\n')
         line = strings.TrimRight(line, " \t\r\n")
-        fmt.Println(line)
+        outputMessage(line)
     }
 }
 
