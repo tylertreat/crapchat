@@ -53,54 +53,54 @@ func NewClient(connection net.Conn) *Client {
     return client
 }
 
-type ChatRoom struct {
+type Server struct {
     clients []*Client
     joins chan net.Conn
     incoming chan string
     outgoing chan string
 }
 
-func (chatRoom *ChatRoom) Broadcast(data string) {
+func (server *Server) Broadcast(data string) {
     fmt.Println(strings.TrimRight(data, " \t\r\n"))
-    for _, client := range chatRoom.clients {
+    for _, client := range server.clients {
         client.outgoing <- data
     }
 }
 
-func (chatRoom *ChatRoom) Join(connection net.Conn) {
+func (server *Server) Join(connection net.Conn) {
     client := NewClient(connection)
-    chatRoom.clients = append(chatRoom.clients, client)
-    go func() { for { chatRoom.incoming <- <-client.incoming } }()
+    server.clients = append(server.clients, client)
+    go func() { for { server.incoming <- <-client.incoming } }()
 }
 
-func (chatRoom *ChatRoom) Listen() {
+func (server *Server) Listen() {
     go func() {
         for {
             select {
-            case data := <-chatRoom.incoming:
-                chatRoom.Broadcast(data)
-            case conn := <-chatRoom.joins:
-                chatRoom.Join(conn)
+            case data := <-server.incoming:
+                server.Broadcast(data)
+            case conn := <-server.joins:
+                server.Join(conn)
             }
         }
     }()
 }
 
-func NewChatRoom() *ChatRoom {
-    chatRoom := &ChatRoom{
+func NewServer() *Server {
+    server := &Server{
         clients: make([]*Client, 0),
         joins: make(chan net.Conn),
         incoming: make(chan string),
         outgoing: make(chan string),
     }
 
-    chatRoom.Listen()
+    server.Listen()
 
-    return chatRoom
+    return server
 }
 
 func main() {
-    chatRoom := NewChatRoom()
+    server := NewServer()
 
     listener, _ := net.Listen("tcp", ":" + PORT)
     fmt.Println("Chat server started on port " + PORT)
@@ -108,7 +108,7 @@ func main() {
     for {
         conn, _ := listener.Accept()
         fmt.Println("User joined the chat!")
-        chatRoom.joins <- conn
+        server.joins <- conn
     }
 }
 
