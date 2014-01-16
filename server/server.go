@@ -7,6 +7,10 @@ import (
     "strings"
 )
 
+
+const PORT string = "6666"
+
+
 type Client struct {
     incoming chan string
     outgoing chan string
@@ -98,8 +102,8 @@ func NewChatRoom() *ChatRoom {
 func main() {
     chatRoom := NewChatRoom()
 
-    listener, _ := net.Listen("tcp", ":6666")
-    fmt.Println("Chat server started on port 6666")
+    listener, _ := net.Listen("tcp", ":" + PORT)
+    fmt.Println("Chat server started on port " + PORT)
 
     for {
         conn, _ := listener.Accept()

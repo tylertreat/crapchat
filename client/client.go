@@ -36,7 +36,12 @@ func outputMessage(message string) {
 
 func (client *Client) ReadIncoming() {
     for {
-        line, _ := client.incomingReader.ReadString('\n')
+        line, err := client.incomingReader.ReadString('\n')
+
+        if err != nil {
+            log.Fatal(err)
+        }
+
         line = strings.TrimRight(line, " \t\r\n")
         outputMessage(line)
     }
