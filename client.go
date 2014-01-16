@@ -3,6 +3,7 @@ package main
 import (
     "bufio"
     "fmt"
+    "log"
     "net"
     "os"
     "strings"
@@ -56,7 +57,11 @@ func main() {
     }
 
     host := os.Args[1]
-    conn, _ := net.Dial("tcp", host+":6666")
+    conn, err := net.Dial("tcp", host+":6666")
+
+    if err != nil {
+        log.Fatal(err)
+    }
 
     client := NewClient(conn)
     client.Start()
