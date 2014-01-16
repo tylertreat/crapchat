@@ -73,12 +73,12 @@ func NewClient(connection net.Conn) *Client {
 }
 
 func main() {
-	if len(os.Args) != 2 {
-		fmt.Println("Usage: ", os.Args[0], "host")
-		os.Exit(1)
+	host := "127.0.0.1"
+
+	if len(os.Args) > 1 {
+		host = os.Args[1]
 	}
 
-	host := os.Args[1]
 	conn, err := net.Dial("tcp", host+":"+PORT)
 
 	if err != nil {
