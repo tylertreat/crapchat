@@ -9,6 +9,10 @@ import (
     "strings"
 )
 
+
+const PORT string = "6666"
+
+
 type Client struct {
     incomingReader *bufio.Reader
     outgoingReader *bufio.Reader
@@ -57,7 +61,7 @@ func main() {
     }
 
     host := os.Args[1]
-    conn, err := net.Dial("tcp", host+":6666")
+    conn, err := net.Dial("tcp", host + ":" + PORT)
 
     if err != nil {
         log.Fatal(err)
